@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ayam Geprek Mamank - Frontend
 
-## Getting Started
+Aplikasi web frontend untuk pemesanan Ayam Geprek Mamank, dibangun menggunakan **Next.js** dan **Tailwind CSS**.
 
-First, run the development server:
+## 🚀 Fitur Utama
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+*   **Menu Digital:** Menampilkan daftar menu makanan dan minuman.
+*   **Keranjang Belanja:** Manajemen item pesanan sebelum checkout.
+*   **Checkout Otomatis:** Integrasi pembayaran online menggunakan **Pakasir**.
+*   **Cek Status Pesanan:** Halaman detail pesanan dengan update status realtime dan tombol cek pembayaran manual.
+*   **Admin Dashboard:** Panel admin untuk mengelola menu, kategori, dan melihat laporan penjualan.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠️ Teknologi
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+*   [Next.js 14](https://nextjs.org/) (App Router)
+*   [Tailwind CSS](https://tailwindcss.com/)
+*   [Lucide React](https://lucide.dev/) (Icons)
+*   [Framer Motion](https://www.framer.com/motion/) (Animations)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📦 Instalasi & Menjalankan
 
-## Learn More
+1.  **Install Dependencies:**
+    ```bash
+    npm install
+    ```
 
-To learn more about Next.js, take a look at the following resources:
+2.  **Konfigurasi Environment:**
+    Buat file `.env` di root folder frontend dan isi dengan:
+    ```env
+    NEXT_PUBLIC_API_URL="http://localhost:3001/api"
+    ```
+    *Sesuaikan URL jika backend berjalan di port berbeda.*
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3.  **Jalankan Server Development:**
+    ```bash
+    npm run dev
+    ```
+    Buka [http://localhost:3000](http://localhost:3000) di browser.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📂 Struktur Folder
 
-## Deploy on Vercel
+*   `src/app`: Halaman-halaman website (App Router).
+    *   `(user)`: Halaman publik (Menu, Pesanan).
+    *   `admin`: Halaman khusus admin (Login, Dashboard).
+*   `src/components`: Komponen UI yang dapat digunakan kembali (Navbar, CartSidebar, dll).
+*   `src/context`: State management global (CartContext).
+*   `src/lib`: Konfigurasi dan utility functions.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 💳 Alur Pembayaran (Pakasir)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1.  User memilih menu dan masuk ke keranjang.
+2.  Saat checkout, user otomatis diarahkan ke halaman pembayaran **Pakasir**.
+3.  Setelah bayar, user kembali ke halaman detail pesanan.
+4.  User bisa menekan tombol **"Cek Status Pembayaran"** untuk memverifikasi pembayaran secara instan.
