@@ -1,49 +1,43 @@
-import { db } from "@/lib/prisma";
-import type { Metadata } from 'next';
+"use client";
+
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
 import Image from "next/image";
-// Kita akan butuh komponen AddToCartButton nanti
-// import AddToCartButton from "@/components/AddToCartButton"; 
+import { API_BASE_URL } from '@/lib/config';
 
-// --- INI BAGIAN AJAIBNYA (SEO OTOMATIS) ---
-type Props = {
-  params: { id: string }
-}
+type Produk = {
+    id: number;
+    nama_produk: string;
+    deskripsi: string | null;
+    harga: number;
+    gambar_url: string | null;
+};
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const id = parseInt(params.id);
-  
-  // 1. Ambil data produk dari database
-  const produk = await db.produk.findUnique({
-    where: { id: id },
-  });
+export default function ProdukDetailPage() {
+    const params = useParams();
+    const id = params?.id as string;
+    const [produk, setProduk] = useState<Produk | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
-  if (!produk) {
-    return {
-      title: "Produk Tidak Ditemukan",
-      description: "Halaman yang Anda cari tidak ada.",
+    useEffect(() => {
+        const fetchProduk = async () => {
+            try {
+                const response = await fetch(`${API_BASE_URL}/public/menu/${id}`);
+                if (response.ok) {
+                    setProduk(await response.json());
+                }
+            } catch (error) {
+                console.error('Error fetching product:', error);
+            }
+            setIsLoading(false);
+        };
+
+        if (id) fetchProduk();
+    }, [id]);
+
+    if (isLoading) {
+        return <p className="p-8 text-center">Loading...</p>;
     }
-  }
-
-  // 2. Buat title dan description secara dinamis
-  return {
-    title: `${produk.nama_produk} - Ayam Goreng Suharti`,
-    description: produk.deskripsi || `Pesan ${produk.nama_produk} sekarang, hidangan legendaris dengan resep asli sejak 1972.`,
-    openGraph: {
-        title: `${produk.nama_produk} - Ayam Goreng Suharti`,
-        description: produk.deskripsi || `Renyah dan lezat!`,
-        images: [{ url: produk.gambar_url || '/placeholder.png' }]
-    }
-  }
-}
-// --- AKHIR BAGIAN AJAIB ---
-
-
-// --- INI TAMPILAN HALAMANNYA ---
-export default async function ProdukDetailPage({ params }: Props) {
-    const id = parseInt(params.id);
-    const produk = await db.produk.findUnique({
-        where: { id: id },
-    });
 
     if (!produk) {
         return <p className="p-8 text-center">Produk tidak ditemukan.</p>
@@ -71,7 +65,7 @@ export default async function ProdukDetailPage({ params }: Props) {
                     <p className="text-gray-600 leading-relaxed mb-8">
                         {produk.deskripsi}
                     </p>
-                    
+
                     {/* Nanti tombol ini bisa kita buat fungsional */}
                     <button className="w-full bg-[#F0A04B] rounded-full text-white font-bold py-3 px-4 rounded hover:bg-black">
                         Tambah ke Keranjang

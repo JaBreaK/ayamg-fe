@@ -2,8 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'; // Tambah useState, useEffect, useRef
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { signOut } from "next-auth/react";
+import { usePathname, useRouter } from 'next/navigation';
 import { API_BASE_URL } from '@/lib/config';
 
 const navLinks: { name: string; href: string }[] = [
@@ -16,9 +15,15 @@ const navLinks: { name: string; href: string }[] = [
 
 export default function AdminNavbar() {
   const pathname = usePathname();
+  const router = useRouter();
   // State untuk menyimpan jumlah pesanan baru
   const [newOrderCount, setNewOrderCount] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const handleLogout = () => {
+    localStorage.removeItem('admin_token');
+    router.push('/admin/login');
+  };
 
   useEffect(() => {
     // Fungsi untuk mengecek pesanan baru
@@ -30,12 +35,12 @@ export default function AdminNavbar() {
         });
         if (response.ok) {
           const data = await response.json();
-          
+
           // Jika jumlah pesanan baru lebih banyak dari sebelumnya, putar suara
           if (data.count > newOrderCount && newOrderCount !== 0) {
             audioRef.current?.play().catch(e => console.error("Audio play failed:", e));
           }
-          
+
           setNewOrderCount(data.count);
         }
       } catch (error) {
@@ -44,10 +49,10 @@ export default function AdminNavbar() {
     };
 
     // Cek pertama kali saat komponen dimuat
-    checkNewOrders(); 
+    checkNewOrders();
 
     // Atur interval untuk mengecek setiap 15 detik
-    const intervalId = setInterval(checkNewOrders, 15000); 
+    const intervalId = setInterval(checkNewOrders, 15000);
 
     // Hentikan interval saat komponen dibongkar
     return () => clearInterval(intervalId);
@@ -72,9 +77,8 @@ export default function AdminNavbar() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`relative px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                    isActive ? 'bg-gray-900' : 'text-gray-300 hover:bg-gray-700'
-                  }`}
+                  className={`relative px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive ? 'bg-gray-900' : 'text-gray-300 hover:bg-gray-700'
+                    }`}
                 >
                   {link.name}
                   {/* Tampilkan notifikasi di link "Kelola Pesanan" */}
@@ -86,16 +90,16 @@ export default function AdminNavbar() {
                 </Link>
               );
             })}
-             <Link href="/" className="bg-blue-500 px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-600">
-                Lihat Situs
-             </Link>
-             {/* TOMBOL LOGOUT BARU */}
-             <button 
-                onClick={() => signOut({ callbackUrl: '/admin/login' })}
-                className="bg-red-500 px-3 py-2 rounded-md text-sm font-medium hover:bg-red-600"
-             >
-                Logout
-             </button>
+            <Link href="/" className="bg-blue-500 px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-600">
+              Lihat Situs
+            </Link>
+            {/* TOMBOL LOGOUT BARU */}
+            <button
+              onClick={handleLogout}
+              className="bg-red-500 px-3 py-2 rounded-md text-sm font-medium hover:bg-red-600"
+            >
+              Logout
+            </button>
           </div>
         </div>
       </div>

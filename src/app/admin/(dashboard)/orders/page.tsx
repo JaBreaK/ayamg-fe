@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { orders_status_pembayaran, orders_status_pesanan } from "@prisma/client";
+type orders_status_pembayaran = 'BELUM_BAYAR' | 'MENUNGGU_KONFIRMASI' | 'LUNAS' | 'BATAL';
+type orders_status_pesanan = 'PESANAN_DITERIMA' | 'SEDANG_DIMASAK' | 'SIAP_DIAMBIL' | 'SELESAI';
 import { MessageSquare, RefreshCw, X, Check, Printer, AlertTriangle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
