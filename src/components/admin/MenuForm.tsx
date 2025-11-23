@@ -28,7 +28,7 @@ export function MenuForm({ produkToEdit, onSuccess }: MenuFormProps) {
 
     useEffect(() => {
         const fetchKategori = async () => {
-            const res = await fetch(`${API_BASE_URL}/kategori`);
+            const res = await fetch(`${API_BASE_URL}/public/kategori`);
             if (res.ok) setKategoriList(await res.json());
         };
         fetchKategori();
@@ -44,9 +44,9 @@ export function MenuForm({ produkToEdit, onSuccess }: MenuFormProps) {
             setKategoriId(produkToEdit.kategori_id.toString());
         } else if (!produkToEdit) {
             // Reset form jika ini adalah mode "Tambah Menu Baru"
-            setNamaProduk(""); 
-            setDeskripsi(""); 
-            setHarga(""); 
+            setNamaProduk("");
+            setDeskripsi("");
+            setHarga("");
             setKategoriId("");
         }
     }, [produkToEdit, kategoriList]);
@@ -62,18 +62,22 @@ export function MenuForm({ produkToEdit, onSuccess }: MenuFormProps) {
         formData.append('kategori_id', kategoriId);
         if (gambar) formData.append('gambar', gambar);
 
-        // TODO: Add JWT token to headers
-const url = produkToEdit ? `${API_BASE_URL}/menu/${produkToEdit.id}` : `${API_BASE_URL}/menu`;
+        const token = localStorage.getItem('admin_token');
+        const url = produkToEdit ? `${API_BASE_URL}/admin/menu/${produkToEdit.id}` : `${API_BASE_URL}/admin/menu`;
         const method = produkToEdit ? 'PUT' : 'POST';
 
-        const response = await fetch(url, { method, body: formData });
+        const response = await fetch(url, {
+            method,
+            body: formData,
+            headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        });
 
         if (response.ok) {
             onSuccess(); // Panggil fungsi onSuccess dari parent
             toast.success(produkToEdit ? "Menu berhasil diupdate!" : "Menu baru berhasil ditambahkan!");
         } else {
             alert("Gagal menyimpan data.");
-            
+
         }
         setIsLoading(false);
     };
